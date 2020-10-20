@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+
+  gdb:
+    image: postgres
+    environment:
+      POSTGRES_DB: "entry_db"
+      POSTGRES_USER: "dawit"
+      POSTGRES_PASSWORD: "superpass"
+    ports:
+      - "5432:5432"
+
+  broker:
+    image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: "dawit"
+      RABBITMQ_DEFAULT_PASS: "brokerpass"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  dawit.api:
+    image: ${DOCKER_REGISTRY-}dawitapi
+    build:
+      context: .
+      dockerfile: Gateway/Dawit.API/Dockerfile
+    depends_on:
+      - gdb
+      - broker
