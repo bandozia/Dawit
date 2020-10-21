@@ -10,6 +10,7 @@ services:
       POSTGRES_PASSWORD: "superpass"
     ports:
       - "5432:5432"
+      
 
   broker:
     image: rabbitmq:3-management-alpine
@@ -18,7 +19,18 @@ services:
       RABBITMQ_DEFAULT_PASS: "brokerpass"
     ports:
       - "5672:5672"
-      - "15672:15672"
+      - "15672:15672"    
+
+
+  neural:
+    image: ${DOCKER_REGISTRY-}neural    
+    restart: on-failure    
+    build:
+      context: .
+      dockerfile: Neural/Dockerfile
+    depends_on:
+      - broker
+
 
   dawit.api:
     image: ${DOCKER_REGISTRY-}dawitapi
