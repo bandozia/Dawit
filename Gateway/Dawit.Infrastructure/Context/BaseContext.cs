@@ -25,10 +25,6 @@ namespace Dawit.Infrastructure.Context
                 user.HasKey(u => u.Id);
                 user.HasIndex(u => u.Id).IsUnique();                
             });
-            //TODO: nao testei
-            /*modelBuilder.Entity<AppUser>().Property(user => user.CreationDate)
-                .HasDefaultValueSql("NOW()").ValueGeneratedOnAdd();*/
-
         }
     }
 }
