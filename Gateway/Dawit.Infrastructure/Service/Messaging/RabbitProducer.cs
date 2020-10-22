@@ -19,35 +19,35 @@ namespace Dawit.Infrastructure.Service.Messaging
 
         public bool AddEventToQueue(string queueName, string msg)
         {
-            var queue = channel.QueueDeclare(queueName);
-            if (queue is not null)
-            {
-                channel.BasicPublish("", queueName, null, Encoding.UTF8.GetBytes(msg));
-                return true;
-            }
-            else
-                return false;
+            return CreateTaskEvent(queueName, Encoding.UTF8.GetBytes(msg));
         }
 
         public bool AddEventToQueue<T>(string queueName, T data)
         {
-            var queue = channel.QueueDeclare(queueName);
+            string dataString = JsonConvert.SerializeObject(data);
+            byte[] body = Encoding.UTF8.GetBytes(dataString);
+            return CreateTaskEvent(queueName, body);            
+        }
+
+        private bool CreateTaskEvent(string queueName, byte[] body)
+        {
+            var queue = channel.QueueDeclare(queueName, true, false, false, null);
+
             if (queue is not null)
             {
-                string dataString = JsonConvert.SerializeObject(data);
-                byte[] body = Encoding.UTF8.GetBytes(dataString);
+                var properties = channel.CreateBasicProperties();
+                properties.Persistent = true;
 
-                channel.BasicPublish("", queueName, null, body);
+                channel.BasicPublish(string.Empty, queueName, properties, body);
                 return true;
             }
             else
                 return false;
         }
 
-
         private void CreateChannel()
         {
-            //TODO: carregar pelo appsettings
+            //TODO: load from settings
             var factory = new ConnectionFactory
             {
                 HostName = "broker",
