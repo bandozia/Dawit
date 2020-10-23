@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 
-namespace Dawit.Infrastructure.Service.Messaging
+namespace Dawit.Infrastructure.Service.Messaging.Rabbit
 {
     public class RabbitProducer : IMsgProducer
     {
-        private IModel channel;
+        private readonly IModel channel;
 
         public RabbitProducer()
         {
-            CreateChannel();
+            channel = CreateChannel();
         }
 
         public bool AddEventToQueue(string queueName, string msg)
@@ -24,15 +24,14 @@ namespace Dawit.Infrastructure.Service.Messaging
 
         public bool AddEventToQueue<T>(string queueName, T data)
         {
-            string dataString = JsonConvert.SerializeObject(data);
-            byte[] body = Encoding.UTF8.GetBytes(dataString);
-            return CreateTaskEvent(queueName, body);            
+            var body = EncodeBodyData(data);
+            return CreateTaskEvent(queueName, body);
         }
 
         private bool CreateTaskEvent(string queueName, byte[] body)
         {
             var queue = channel.QueueDeclare(queueName, true, false, false, null);
-
+            
             if (queue is not null)
             {
                 var properties = channel.CreateBasicProperties();
@@ -45,7 +44,13 @@ namespace Dawit.Infrastructure.Service.Messaging
                 return false;
         }
 
-        private void CreateChannel()
+        private static byte[] EncodeBodyData<T>(T data)
+        {
+            string dataString = JsonConvert.SerializeObject(data);
+            return Encoding.UTF8.GetBytes(dataString);
+        }
+
+        private static IModel CreateChannel()
         {
             //TODO: load from settings
             var factory = new ConnectionFactory
@@ -55,7 +60,7 @@ namespace Dawit.Infrastructure.Service.Messaging
                 Password = "brokerpass"
             };
 
-            channel = factory.CreateConnection().CreateModel();
+            return factory.CreateConnection().CreateModel();
         }
     }
 }

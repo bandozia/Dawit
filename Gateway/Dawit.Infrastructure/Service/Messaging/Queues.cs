@@ -9,5 +9,7 @@ namespace Dawit.Infrastructure.Service.Messaging
     public static class Queues
     {
         public const string NN_START_TRAIN = "nn_start_train";
+        public const string NN_TRAIN_PROGRESS = "nn_train_progress";
+        public const string NN_TRAIN_COMPLETE = "nn_train_complete";
     }
 }

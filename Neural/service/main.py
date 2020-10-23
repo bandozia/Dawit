@@ -38,7 +38,7 @@ def run():
     channel.queue_declare(
         'nn_start_train', exclusive=False, durable=True)
     channel.queue_declare('nn_train_progress', exclusive=False)
-    channel.queue_declare('nn_train_complete', exclusive=False, durable=True)
+    channel.queue_declare('nn_train_complete', exclusive=False, durable=True, auto_delete=False)
 
     channel.basic_consume(queue='nn_start_train',
                                 on_message_callback=start_train)
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     attempts = 5
     c = 0
     
-    while (success is not True):        
+    while (success is not True and c < attempts):        
         try:
             channel = connect("localhost" if 'LOCAL_TEST' in os.environ else 'broker')
             success = True

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dawit.Domain.Model
+namespace Dawit.Domain.Model.Neural
 {
     public class NeuralJob : BaseModel
     {

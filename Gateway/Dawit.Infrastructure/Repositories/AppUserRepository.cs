@@ -1,4 +1,4 @@
-﻿using Dawit.Domain.Model;
+﻿using Dawit.Domain.Model.Auth;
 using Dawit.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using System;

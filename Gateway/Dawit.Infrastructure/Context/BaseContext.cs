@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dawit.Domain.Model;
+using Dawit.Domain.Model.Auth;
 
 namespace Dawit.Infrastructure.Context
 {

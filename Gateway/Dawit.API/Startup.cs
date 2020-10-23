@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Dawit.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Dawit.Infrastructure.Service.Messaging;
+using Dawit.Infrastructure.Service.Messaging.Rabbit;
 
 namespace Dawit.API
 {
@@ -37,6 +38,7 @@ namespace Dawit.API
             services.AddDbContext<BaseContext>(options => options.UseNpgsql(Configuration.GetConnectionString("gdb")));
 
             services.AddSingleton<IMsgProducer, RabbitProducer>();
+            services.AddSingleton<IMsgConsumer, RabbitConsumer>();
                         
         }
                 

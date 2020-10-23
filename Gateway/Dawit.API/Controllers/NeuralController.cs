@@ -1,4 +1,4 @@
-﻿using Dawit.Domain.Model;
+﻿using Dawit.Domain.Model.Neural;
 using Dawit.Infrastructure.Service.Messaging;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,10 +13,17 @@ namespace Dawit.API.Controllers
     public class NeuralController : ControllerBase
     {
         private readonly IMsgProducer _eventProducer;
+        private readonly IMsgConsumer _eventConsumer;
 
-        public NeuralController(IMsgProducer eventProducer)
+        public NeuralController(IMsgProducer eventProducer, IMsgConsumer eventConsumer)
         {
             _eventProducer = eventProducer;
+            _eventConsumer = eventConsumer;
+            //just test
+            _eventConsumer.AddQueueToConsume<NeuralJobResult>(Queues.NN_TRAIN_COMPLETE, true, (res) =>
+            {
+                Console.WriteLine(res.JobId);
+            });
         }
 
         [HttpPost("train")]

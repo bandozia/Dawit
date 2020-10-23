@@ -19,7 +19,7 @@ class TrainWorker:
 
     def train(self) -> None:
         for i in range(0, 5):
-            time.sleep(0.2)
+            time.sleep(0.8)
             self.currentMetrics = {
                 'Epoch': i,
                 'Accuracy': i * 0.2 + (0.2 * rn.random()),
