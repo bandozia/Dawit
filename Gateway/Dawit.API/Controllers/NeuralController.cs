@@ -1,4 +1,5 @@
-﻿using Dawit.Infrastructure.Service.Messaging;
+﻿using Dawit.Domain.Model;
+using Dawit.Infrastructure.Service.Messaging;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,8 @@ namespace Dawit.API.Controllers
         [HttpPost("train")]
         public IActionResult SendToTrain()
         {
-            if (_eventProducer.AddEventToQueue("nn_start_train", "test"))
+            var testJob = new NeuralJob { Id = Guid.NewGuid(), Name = "Job teste" };
+            if (_eventProducer.AddEventToQueue<NeuralJob>(Queues.NN_START_TRAIN, testJob))
             {
                 return Ok("evento enviado!");
             }

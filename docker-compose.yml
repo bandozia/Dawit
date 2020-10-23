@@ -22,16 +22,16 @@ services:
       - "15672:15672"    
 
 
-  neural:
-    image: ${DOCKER_REGISTRY-}neural
-    environment:
-      MAX_WORKERS: 3
-    restart: on-failure    
-    build:
-      context: .
-      dockerfile: Neural/Dockerfile
-    depends_on:
-      - broker
+#  neural:
+#    image: ${DOCKER_REGISTRY-}neural
+#    environment:
+#      MAX_WORKERS: 3
+#    restart: on-failure    
+#    build:
+#      context: .
+#      dockerfile: Neural/Dockerfile
+#    depends_on:
+#      - broker
 
 
   dawit.api:

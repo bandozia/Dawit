@@ -1,13 +1,13 @@
 import pika
 import os
-from multiprocessing import Pool
-from pika.adapters.blocking_connection import BlockingChannel
-from train.trainworker import TrainWorker
 import time
 import json
+from pika.adapters.blocking_connection import BlockingChannel
+from train.trainworker import TrainWorker
+from concurrent.futures import ThreadPoolExecutor
 
 channel: BlockingChannel = None
-pool: Pool = None
+pool: ThreadPoolExecutor = None
 
 def connect(host) -> BlockingChannel:
     credentials = pika.PlainCredentials('dawit', 'brokerpass')
@@ -17,21 +17,21 @@ def connect(host) -> BlockingChannel:
     return conn.channel()
 
 
-def start_train(ch, method, props, body):
-    jobData = json.loads(body)
+def start_train(ch, method, props, body):             
+    jobData = json.loads(body)    
     job = TrainWorker(jobData, train_progress, train_complete, method.delivery_tag)
-    pool.apply_async(job.train)
+    pool.submit(job.train)
+    
 
-
-def train_progress(metrics):
+def train_progress(metrics):    
     print(metrics)
     channel.basic_publish('', 'nn_train_progress', json.dumps(metrics))
     
 
-def train_complete(jobResult, deliveryTag):
-    print("treino completo")    
+def train_complete(jobResult, deliveryTag):    
     channel.basic_ack(deliveryTag)    
-    channel.basic_publish('', 'nn_train_complete', json.dumps(jobResult))
+    channel.basic_publish('', 'nn_train_complete', json.dumps(jobResult))        
+    print("treino completo")
     
 
 def run():
@@ -50,21 +50,24 @@ def run():
 
 if __name__ == "__main__":
     
+    print("iniciando conexao com o broker...")
     success = False
-    for i in range(0, 5):
+    attempts = 5
+    c = 0
+    
+    while (success is not True):        
         try:
-            print("iniciando conexao com o broker...")
-            time.sleep(7)
             channel = connect("localhost" if 'LOCAL_TEST' in os.environ else 'broker')
             success = True
             print("sucesso")
         except:
-            print("Falha na conexao[%d]. Tentando novamente em 5 segundos..." % (i+1))
-            
+            print("Falha na conexao[%d]. Tentando novamente em 5 segundos..." % (c+1))
+            c += 1
+            time.sleep(5)
     
     if success:
         mw = os.environ.get('MAX_WORKERS')        
-        pool = Pool(2 if mw is None else int(mw))            
+        pool = ThreadPoolExecutor(2 if mw is None else int(mw))           
         run()
     else:
         print("Nao foi possivel conectar-se ao message broker.")
