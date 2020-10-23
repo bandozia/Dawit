@@ -23,7 +23,9 @@ services:
 
 
   neural:
-    image: ${DOCKER_REGISTRY-}neural    
+    image: ${DOCKER_REGISTRY-}neural
+    environment:
+      MAX_WORKERS: 3
     restart: on-failure    
     build:
       context: .
