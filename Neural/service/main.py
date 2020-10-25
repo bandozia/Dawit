@@ -28,16 +28,16 @@ def train_progress(metrics):
     channel.basic_publish('', 'nn_train_progress', json.dumps(metrics))
     
 
-def train_complete(jobResult, deliveryTag):    
+def train_complete(jobResult, deliveryTag):        
     channel.basic_ack(deliveryTag)    
     channel.basic_publish('', 'nn_train_complete', json.dumps(jobResult))        
-    print("treino completo")
+    print("treino completo")    
     
 
 def run():
     channel.queue_declare(
-        'nn_start_train', exclusive=False, durable=True)
-    channel.queue_declare('nn_train_progress', exclusive=False)
+        'nn_start_train', exclusive=False, durable=True, auto_delete=False)
+    channel.queue_declare('nn_train_progress', exclusive=False, auto_delete=True)
     channel.queue_declare('nn_train_complete', exclusive=False, durable=True, auto_delete=False)
 
     channel.basic_consume(queue='nn_start_train',

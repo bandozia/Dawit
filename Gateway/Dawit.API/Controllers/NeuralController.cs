@@ -13,17 +13,10 @@ namespace Dawit.API.Controllers
     public class NeuralController : ControllerBase
     {
         private readonly IMsgProducer _eventProducer;
-        private readonly IMsgConsumer _eventConsumer;
-
-        public NeuralController(IMsgProducer eventProducer, IMsgConsumer eventConsumer)
+        
+        public NeuralController(IMsgProducer eventProducer)
         {
             _eventProducer = eventProducer;
-            _eventConsumer = eventConsumer;
-            //just test
-            _eventConsumer.AddQueueToConsume<NeuralJobResult>(Queues.NN_TRAIN_COMPLETE, true, (res) =>
-            {
-                Console.WriteLine(res.JobId);
-            });
         }
 
         [HttpPost("train")]

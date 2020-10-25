@@ -6,32 +6,49 @@ using System.Text;
 using System.Threading.Tasks;
 using RabbitMQ.Client.Events;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace Dawit.Infrastructure.Service.Messaging.Rabbit
 {
     public class RabbitConsumer : IMsgConsumer
-    {
-        private readonly IModel channel;
+    {        
+        private readonly IMsgContext<IModel> _context;
 
-        public RabbitConsumer()
+        public RabbitConsumer(IMsgContext<IModel> context)
         {
-            channel = CreateChannel();
-            Console.WriteLine("CRIADO!!!!");
+            _context = context;            
         }
-
+                
         public void AddQueueToConsume<T>(string queueName, bool durable, Action<T> msgReceivedCallback)
         {
-            channel.QueueDeclare(queueName, durable, false, false);
-            var consumer = new EventingBasicConsumer(channel);
-
+            var consumer = RegisterConsumer(queueName, durable);
             consumer.Received += (s, ea) =>
             {
                 T bodyObj = DecodeBodyData<T>(ea.Body.ToArray());
                 msgReceivedCallback.Invoke(bodyObj);
-                channel.BasicAck(ea.DeliveryTag, false);
+                //TODO: logic for ack
+                _context.ConsumerChannel.BasicAck(ea.DeliveryTag, false);
             };
+        }
 
-            channel.BasicConsume(queueName, false, consumer);
+        public void AddQueueToConsume<T>(string queueName, bool durable, Func<T, Task> msgReceivedCallback)
+        {
+            var consumer = RegisterConsumer(queueName, durable);
+            consumer.Received += (s, ea) =>
+            {
+                T bodyObj = DecodeBodyData<T>(ea.Body.ToArray());
+                msgReceivedCallback.Invoke(bodyObj);
+                _context.ConsumerChannel.BasicAck(ea.DeliveryTag, false);
+            };
+        }
+
+        private EventingBasicConsumer RegisterConsumer(string queueName, bool durable)
+        {
+            _context.ConsumerChannel.QueueDeclare(queueName, durable, false, !durable);
+            var consumer = new EventingBasicConsumer(_context.ConsumerChannel);
+            _context.ConsumerChannel.BasicConsume(queueName, false, consumer);
+
+            return consumer;
         }
                
 
@@ -40,20 +57,7 @@ namespace Dawit.Infrastructure.Service.Messaging.Rabbit
             string bodyString = Encoding.UTF8.GetString(body);
             return JsonConvert.DeserializeObject<T>(bodyString);
         }
-
-        private static IModel CreateChannel()
-        {
-            //TODO: load from settings
-            var factory = new ConnectionFactory
-            {
-                HostName = "broker",
-                UserName = "dawit",
-                Password = "brokerpass"
-            };
-
-            return factory.CreateConnection().CreateModel();
-        }
-
+                
        
     }
 }

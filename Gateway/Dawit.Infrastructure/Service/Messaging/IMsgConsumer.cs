@@ -8,8 +8,8 @@ namespace Dawit.Infrastructure.Service.Messaging
 {
     public interface IMsgConsumer
     {
-        //TODO: implement async version
         void AddQueueToConsume<T>(string queueName, bool durable, Action<T> msgReceivedCallback);
-        
+        void AddQueueToConsume<T>(string queueName, bool durable, Func<T, Task> msgReceivedCallback);
+
     }
 }

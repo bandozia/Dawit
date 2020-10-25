@@ -8,7 +8,7 @@ namespace Dawit.Domain.Model.Neural
 {
     public class NeuralJobResult
     {
-        public Guid JobId { get; set; }
+        public NeuralJob NeuralJob { get; set; }
         public Metrics Metrics { get; set; }
     }
 }

@@ -14,6 +14,9 @@ using Dawit.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Dawit.Infrastructure.Service.Messaging;
 using Dawit.Infrastructure.Service.Messaging.Rabbit;
+using RabbitMQ.Client;
+using Dawit.API.Service.Neural;
+using Dawit.Infrastructure.Repositories;
 
 namespace Dawit.API
 {
@@ -36,10 +39,12 @@ namespace Dawit.API
             });
 
             services.AddDbContext<BaseContext>(options => options.UseNpgsql(Configuration.GetConnectionString("gdb")));
-
-            services.AddSingleton<IMsgProducer, RabbitProducer>();
-            services.AddSingleton<IMsgConsumer, RabbitConsumer>();
                         
+            services.AddSingleton<IMsgContext<IModel>, RabbitContext>();            
+            services.AddScoped<IMsgProducer, RabbitProducer>();
+            services.AddSingleton<IMsgConsumer, RabbitConsumer>();
+            services.AddHostedService<NeuralReturnConsumer>();
+            
         }
                 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, BaseContext dbContext)
@@ -48,14 +53,14 @@ namespace Dawit.API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Dawit.API v1"));
-                
-                dbContext.Database.EnsureCreated();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Dawit.API v1"));                                
             }
 
             app.UseRouting();
             app.UseAuthorization();
 
+            dbContext.Database.EnsureCreated();
+                        
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

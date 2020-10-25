@@ -21,6 +21,7 @@ class TrainWorker:
         for i in range(0, 5):
             time.sleep(0.8)
             self.currentMetrics = {
+                'JobId': self.jobData['Id'],
                 'Epoch': i,
                 'Accuracy': i * 0.2 + (0.2 * rn.random()),
                 'ValidationAccuracy': i * 0.18 + (0.15 * rn.random()),
@@ -28,6 +29,6 @@ class TrainWorker:
             self.progress(self.currentMetrics)
 
         self.complete({
-            'JobId': self.jobData['Id'],
+            'NeuralJob': self.jobData,
             'Metrics': self.currentMetrics
         }, self.deliveryTag)

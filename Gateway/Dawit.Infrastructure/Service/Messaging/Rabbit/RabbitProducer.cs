@@ -9,12 +9,12 @@ using RabbitMQ.Client;
 namespace Dawit.Infrastructure.Service.Messaging.Rabbit
 {
     public class RabbitProducer : IMsgProducer
-    {
-        private readonly IModel channel;
+    {        
+        private readonly IMsgContext<IModel> _context;
 
-        public RabbitProducer()
+        public RabbitProducer(IMsgContext<IModel> context)
         {
-            channel = CreateChannel();
+            _context = context;           
         }
 
         public bool AddEventToQueue(string queueName, string msg)
@@ -30,14 +30,14 @@ namespace Dawit.Infrastructure.Service.Messaging.Rabbit
 
         private bool CreateTaskEvent(string queueName, byte[] body)
         {
-            var queue = channel.QueueDeclare(queueName, true, false, false, null);
+            var queue = _context.ProducerChannel.QueueDeclare(queueName, true, false, false, null);
             
             if (queue is not null)
             {
-                var properties = channel.CreateBasicProperties();
+                var properties = _context.ProducerChannel.CreateBasicProperties();
                 properties.Persistent = true;
 
-                channel.BasicPublish(string.Empty, queueName, properties, body);
+                _context.ProducerChannel.BasicPublish(string.Empty, queueName, properties, body);
                 return true;
             }
             else
@@ -49,18 +49,6 @@ namespace Dawit.Infrastructure.Service.Messaging.Rabbit
             string dataString = JsonConvert.SerializeObject(data);
             return Encoding.UTF8.GetBytes(dataString);
         }
-
-        private static IModel CreateChannel()
-        {
-            //TODO: load from settings
-            var factory = new ConnectionFactory
-            {
-                HostName = "broker",
-                UserName = "dawit",
-                Password = "brokerpass"
-            };
-
-            return factory.CreateConnection().CreateModel();
-        }
+             
     }
 }
