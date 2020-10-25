@@ -26,18 +26,26 @@ namespace Dawit.API.Service.Neural
 
         private void RegisterDefaultConsumers()
         {
-            _msgConsumer.AddQueueToConsume<Metrics>(Queues.NN_TRAIN_PROGRESS, false, OnTrainProgress);
-            _msgConsumer.AddQueueToConsume<NeuralJobResult>(Queues.NN_TRAIN_COMPLETE, true, OnTrainComplete);
+            _msgConsumer.AddQueueToConsume<NeuralMetric>(Queues.NN_TRAIN_PROGRESS, false, OnTrainProgress);
+            _msgConsumer.AddQueueToConsume<JobResult>(Queues.NN_TRAIN_COMPLETE, true, OnTrainComplete);
         }
 
-        private async Task OnTrainProgress(Metrics metrics)
+        private async Task OnTrainProgress(NeuralMetric progress)
         {
-            Console.WriteLine($"Train Progress: {metrics.Epoch} : {metrics.Accuracy}");
+            //TODO: signal client
+            Console.WriteLine($"Train Progress: {progress.JobId} : {progress.Accuracy}");
         }
 
-        private async Task OnTrainComplete(NeuralJobResult result)
-        {            
-            Console.WriteLine($"train complete!!: {result.NeuralJob.Name}");
+        private async Task OnTrainComplete(JobResult result)
+        {
+            using (var scope = _services.CreateScope())
+            {
+                var neuralRepo = scope.ServiceProvider.GetRequiredService<IBaseRepository<NeuralJob>>();
+                //TODO: update neural job
+            }
+            
+            //TODO: signal client
+            Console.WriteLine($"train complete!!: {result.JobId} | {result.Metrics.Count}");
         }
 
         public Task StartAsync(CancellationToken cancellationToken) => Task.CompletedTask;

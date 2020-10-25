@@ -17,18 +17,18 @@ def connect(host) -> BlockingChannel:
     return conn.channel()
 
 
-def start_train(ch, method, props, body):             
+def start_train(ch, method, props, body):          
     jobData = json.loads(body)    
     job = TrainWorker(jobData, train_progress, train_complete, method.delivery_tag)
     pool.submit(job.train)
     
 
-def train_progress(metrics):    
-    print(metrics)
-    channel.basic_publish('', 'nn_train_progress', json.dumps(metrics))
+def train_progress(metric):  
+    print(metric)      
+    channel.basic_publish('', 'nn_train_progress', json.dumps(metric))
     
 
-def train_complete(jobResult, deliveryTag):        
+def train_complete(jobResult, deliveryTag):            
     channel.basic_ack(deliveryTag)    
     channel.basic_publish('', 'nn_train_complete', json.dumps(jobResult))        
     print("treino completo")    

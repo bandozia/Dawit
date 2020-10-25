@@ -8,6 +8,9 @@ namespace Dawit.Domain.Model.Neural
 {
     public class NeuralJob : BaseModel
     {
+        //TODO: add user
         public string Name { get; set; }
+        public IEnumerable<NeuralMetric> Metrics { get; set; }
+               
     }
 }

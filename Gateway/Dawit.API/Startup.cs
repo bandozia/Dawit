@@ -17,6 +17,8 @@ using Dawit.Infrastructure.Service.Messaging.Rabbit;
 using RabbitMQ.Client;
 using Dawit.API.Service.Neural;
 using Dawit.Infrastructure.Repositories;
+using Dawit.Domain.Model.Neural;
+using Dawit.Infrastructure.Repositories.ef;
 
 namespace Dawit.API
 {
@@ -39,9 +41,11 @@ namespace Dawit.API
             });
 
             services.AddDbContext<BaseContext>(options => options.UseNpgsql(Configuration.GetConnectionString("gdb")));
+
+            services.AddScoped<IBaseRepository<NeuralJob>, NeuralJobRepository>();
                         
             services.AddSingleton<IMsgContext<IModel>, RabbitContext>();            
-            services.AddScoped<IMsgProducer, RabbitProducer>();
+            services.AddSingleton<IMsgProducer, RabbitProducer>();
             services.AddSingleton<IMsgConsumer, RabbitConsumer>();
             services.AddHostedService<NeuralReturnConsumer>();
             

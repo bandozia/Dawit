@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dawit.Infrastructure.Repositories
+namespace Dawit.Infrastructure.Repositories.ef
 {
     public class AppUserRepository : BaseRepository<AppUser>
     {

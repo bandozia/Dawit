@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dawit.Domain.Model.Auth;
+using Dawit.Domain.Model.Neural;
 
 namespace Dawit.Infrastructure.Context
 {
@@ -24,6 +25,13 @@ namespace Dawit.Infrastructure.Context
             {
                 user.HasKey(u => u.Id);
                 user.HasIndex(u => u.Id).IsUnique();                
+            });
+
+            modelBuilder.Entity<NeuralJob>(njob =>
+            {
+                njob.HasKey(n => n.Id);
+                njob.HasIndex(n => n.Id).IsUnique();
+                njob.HasMany(n => n.Metrics).WithOne(m => m.NeuralJob);
             });
         }
     }

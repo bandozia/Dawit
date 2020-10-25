@@ -17,8 +17,4 @@
     <ProjectReference Include="..\Dawit.Infrastructure\Dawit.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Service\Extensions\" />
-  </ItemGroup>
-
 </Project>
