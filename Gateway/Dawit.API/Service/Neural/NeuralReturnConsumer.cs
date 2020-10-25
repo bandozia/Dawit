@@ -26,16 +26,17 @@ namespace Dawit.API.Service.Neural
 
         private void RegisterDefaultConsumers()
         {
+            _msgConsumer.AddQueueToConsume<Metrics>(Queues.NN_TRAIN_PROGRESS, false, OnTrainProgress);
             _msgConsumer.AddQueueToConsume<NeuralJobResult>(Queues.NN_TRAIN_COMPLETE, true, OnTrainComplete);
         }
 
         private async Task OnTrainProgress(Metrics metrics)
         {
-
+            Console.WriteLine($"Train Progress: {metrics.Epoch} : {metrics.Accuracy}");
         }
 
         private async Task OnTrainComplete(NeuralJobResult result)
-        {
+        {            
             Console.WriteLine($"train complete!!: {result.NeuralJob.Name}");
         }
 

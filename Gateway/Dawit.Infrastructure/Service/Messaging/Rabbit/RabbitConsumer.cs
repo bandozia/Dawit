@@ -11,34 +11,47 @@ using System.Threading;
 namespace Dawit.Infrastructure.Service.Messaging.Rabbit
 {
     public class RabbitConsumer : IMsgConsumer
-    {        
+    {
         private readonly IMsgContext<IModel> _context;
 
         public RabbitConsumer(IMsgContext<IModel> context)
         {
-            _context = context;            
+            _context = context;
         }
-                
+
         public void AddQueueToConsume<T>(string queueName, bool durable, Action<T> msgReceivedCallback)
         {
             var consumer = RegisterConsumer(queueName, durable);
             consumer.Received += (s, ea) =>
             {
                 T bodyObj = DecodeBodyData<T>(ea.Body.ToArray());
-                msgReceivedCallback.Invoke(bodyObj);
-                //TODO: logic for ack
-                _context.ConsumerChannel.BasicAck(ea.DeliveryTag, false);
+                try
+                {
+                    msgReceivedCallback.Invoke(bodyObj);
+                    _context.ConsumerChannel.BasicAck(ea.DeliveryTag, false);
+                }
+                catch
+                {
+                    _context.ConsumerChannel.BasicNack(ea.DeliveryTag, false, durable);
+                }
             };
         }
 
         public void AddQueueToConsume<T>(string queueName, bool durable, Func<T, Task> msgReceivedCallback)
         {
             var consumer = RegisterConsumer(queueName, durable);
-            consumer.Received += (s, ea) =>
+            consumer.Received += async (s, ea) =>
             {
                 T bodyObj = DecodeBodyData<T>(ea.Body.ToArray());
-                msgReceivedCallback.Invoke(bodyObj);
-                _context.ConsumerChannel.BasicAck(ea.DeliveryTag, false);
+                try
+                {
+                    await msgReceivedCallback.Invoke(bodyObj);
+                    _context.ConsumerChannel.BasicAck(ea.DeliveryTag, false);
+                }
+                catch
+                {
+                    _context.ConsumerChannel.BasicNack(ea.DeliveryTag, false, durable);
+                }
             };
         }
 
@@ -50,14 +63,14 @@ namespace Dawit.Infrastructure.Service.Messaging.Rabbit
 
             return consumer;
         }
-               
 
-        private T DecodeBodyData<T>(byte[] body)
+
+        private static T DecodeBodyData<T>(byte[] body)
         {
             string bodyString = Encoding.UTF8.GetString(body);
             return JsonConvert.DeserializeObject<T>(bodyString);
         }
-                
-       
+
+
     }
 }
