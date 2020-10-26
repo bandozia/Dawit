@@ -42,7 +42,8 @@ namespace Dawit.API
 
             services.AddDbContext<BaseContext>(options => options.UseNpgsql(Configuration.GetConnectionString("gdb")));
 
-            services.AddScoped<IBaseRepository<NeuralJob>, NeuralJobRepository>();
+            services.AddScoped<INeuralJobRepository, NeuralJobRepository>();
+            services.AddTransient<NeuralJobService>();
                         
             services.AddSingleton<IMsgContext<IModel>, RabbitContext>();            
             services.AddSingleton<IMsgProducer, RabbitProducer>();

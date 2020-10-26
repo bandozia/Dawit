@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace Dawit.Infrastructure.Repositories
 {
-    public interface IBaseRepository<T> where T : BaseModel
-    {
-        public Task<T> InsertAsync(T item);
-        public Task<IEnumerable<T>> GetAllAsync();        
+    public interface IQueryRepository<T> where T : BaseModel
+    {        
+        public Task<IEnumerable<T>> GetAllAsync();
         public Task<T> GetByIdAsync(Guid id);
     }
 }

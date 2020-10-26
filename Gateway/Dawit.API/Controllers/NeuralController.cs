@@ -1,4 +1,6 @@
-﻿using Dawit.Domain.Model.Neural;
+﻿using Dawit.API.Model.Form;
+using Dawit.API.Service.Neural;
+using Dawit.Domain.Model.Neural;
 using Dawit.Infrastructure.Service.Messaging;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,26 +14,27 @@ namespace Dawit.API.Controllers
     [Route("neural")]
     public class NeuralController : ControllerBase
     {
-        private readonly IMsgProducer _eventProducer;
-        
-        public NeuralController(IMsgProducer eventProducer)
+        private readonly NeuralJobService _neuralJobService;
+
+        public NeuralController(NeuralJobService neuralJobService)
         {
-            _eventProducer = eventProducer;
+            _neuralJobService = neuralJobService;
+        }
+
+        [HttpPost("create")]
+        public async Task<IActionResult> Create(NeuralJobForm form)
+        {            
+            var job = await _neuralJobService.CreateNeuralJob(form);
+            //TODO: insert uri
+            return Created(job.Id.ToString(), job);
         }
 
         [HttpPost("train")]
-        public IActionResult SendToTrain()
+        public async Task<IActionResult> StartTrain(string jobId)
         {
-            var testJob = new NeuralJob { Id = Guid.NewGuid(), Name = "Job teste" };
-            if (_eventProducer.AddEventToQueue<NeuralJob>(Queues.NN_START_TRAIN, testJob))
-            {
-                return Ok("evento enviado!");
-            }
-            else
-            {
-                return Ok("a fila nao foi criada");
-            }
-            
+            //TODO: check if user realy owns the job
+            await _neuralJobService.TrainNeuralJob(Guid.Parse(jobId));
+            return Ok();
         }
     }
 }

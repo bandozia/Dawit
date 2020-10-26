@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Dawit.Infrastructure.Repositories.ef
 {
-    public abstract class BaseRepository<T>: IBaseRepository<T> where T : BaseModel
+    public abstract class BaseRepository<T>: IQueryRepository<T> where T : BaseModel
     {
         protected readonly BaseContext Context;
         protected readonly DbSet<T> DbSet;
@@ -28,15 +28,7 @@ namespace Dawit.Infrastructure.Repositories.ef
         public virtual async Task<T> GetByIdAsync(Guid id)
         {
             return await DbSet.SingleAsync(item => item.Id == id);
-        }
-
-        public virtual async Task<T> InsertAsync(T item)
-        {
-            DbSet.Add(item);
-            await Context.SaveChangesAsync();
-            return item;
-        }
-              
+        }             
 
     }
 }

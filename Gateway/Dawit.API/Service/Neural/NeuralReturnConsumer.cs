@@ -40,7 +40,7 @@ namespace Dawit.API.Service.Neural
         {
             using (var scope = _services.CreateScope())
             {
-                var neuralRepo = scope.ServiceProvider.GetRequiredService<IBaseRepository<NeuralJob>>();
+                var neuralRepo = scope.ServiceProvider.GetRequiredService<INeuralJobRepository>();
                 //TODO: update neural job
             }
             

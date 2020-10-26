@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Dawit.Infrastructure.Repositories.ef
 {
-    public class NeuralJobRepository : BaseRepository<NeuralJob>
+    public class NeuralJobRepository : BaseRepository<NeuralJob>, INeuralJobRepository
     {
         public NeuralJobRepository(BaseContext context) : base(context)
         {
@@ -20,5 +20,11 @@ namespace Dawit.Infrastructure.Repositories.ef
             return DbSet.Include(n => n.Metrics).SingleAsync(n => n.Id == id);
         }
 
+        public async Task<NeuralJob> InsertAsync(NeuralJob item)
+        {
+            DbSet.Add(item);
+            await Context.SaveChangesAsync();
+            return item;
+        }
     }
 }
