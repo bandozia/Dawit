@@ -1,4 +1,4 @@
-﻿using Dawit.Domain.Model;
+﻿using Dawit.Domain.Model.Auth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace Dawit.Infrastructure.Repositories
 {
-    public interface ICommandRepository<T> where T : BaseModel
+    public interface IAppUserRepository
     {
-        Task<T> InsertAsync(T item);
+        Task<AppUser> GetByEmailAsync(string email);
+        Task<AppUser> InsertAsync(AppUser user);
     }
 }

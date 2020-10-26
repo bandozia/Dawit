@@ -1,12 +1,9 @@
 ﻿using Dawit.Domain.Model.Auth;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Dawit.Infrastructure.Service.Auth
 {

@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace Dawit.Infrastructure.Repositories.ef
 {
-    public class NeuralJobRepository : BaseRepository<NeuralJob>, INeuralJobRepository
+    public class NeuralJobRepository : BasicRepository<NeuralJob>, INeuralJobRepository
     {
         public NeuralJobRepository(BaseContext context) : base(context)
         {
         }
 
-        public override Task<NeuralJob> GetByIdAsync(Guid id)
+        public async Task<NeuralJob> GetByIdAsync(Guid id)
         {
-            return DbSet.Include(n => n.Metrics).SingleAsync(n => n.Id == id);
+            return await DbSet.Include(n => n.Metrics).SingleAsync(n => n.Id == id);
         }
 
         public async Task<NeuralJob> InsertAsync(NeuralJob item)
