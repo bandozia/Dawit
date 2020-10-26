@@ -24,7 +24,8 @@ namespace Dawit.Infrastructure.Context
             modelBuilder.Entity<AppUser>(user =>
             {
                 user.HasKey(u => u.Id);
-                user.HasIndex(u => u.Id).IsUnique();                
+                user.HasIndex(u => u.Id).IsUnique();
+                user.HasIndex(u => u.Email).IsUnique();
             });
 
             modelBuilder.Entity<NeuralJob>(njob =>

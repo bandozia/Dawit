@@ -19,6 +19,8 @@ using Dawit.API.Service.Neural;
 using Dawit.Infrastructure.Repositories;
 using Dawit.Domain.Model.Neural;
 using Dawit.Infrastructure.Repositories.ef;
+using Dawit.Infrastructure.Service.Auth;
+using Dawit.API.Service.Extensions;
 
 namespace Dawit.API
 {
@@ -42,9 +44,12 @@ namespace Dawit.API
 
             services.AddDbContext<BaseContext>(options => options.UseNpgsql(Configuration.GetConnectionString("gdb")));
 
+            services.AddScoped(AuthFactory.JWTTokenService);
+            services.AddTokenAuthentication(Configuration["Jwt:secret"]);
+
             services.AddScoped<INeuralJobRepository, NeuralJobRepository>();
             services.AddTransient<NeuralJobService>();
-                        
+                                                
             services.AddSingleton<IMsgContext<IModel>, RabbitContext>();            
             services.AddSingleton<IMsgProducer, RabbitProducer>();
             services.AddSingleton<IMsgConsumer, RabbitConsumer>();
