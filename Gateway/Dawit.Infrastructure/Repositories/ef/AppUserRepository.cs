@@ -9,16 +9,22 @@ using System.Threading.Tasks;
 
 namespace Dawit.Infrastructure.Repositories.ef
 {
-    public class AppUserRepository : IAppUserRepository
+    public class AppUserRepository : BasicRepository<AppUser>, IAppUserRepository
     {
+        public AppUserRepository(BaseContext context) : base(context)
+        {
+        }
+
         public async Task<AppUser> GetByEmailAsync(string email)
         {
-            throw new NotImplementedException();
+            return await DbSet.SingleAsync(u => u.Email == email);
         }
 
         public async Task<AppUser> InsertAsync(AppUser user)
         {
-            throw new NotImplementedException();
+            DbSet.Add(user);
+            await Context.SaveChangesAsync();
+            return user;
         }
     }
 }
