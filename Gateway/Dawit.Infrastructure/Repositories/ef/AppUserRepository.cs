@@ -17,7 +17,7 @@ namespace Dawit.Infrastructure.Repositories.ef
 
         public async Task<AppUser> GetByEmailAsync(string email)
         {
-            return await DbSet.SingleAsync(u => u.Email == email);
+            return await DbSet.SingleOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<AppUser> InsertAsync(AppUser user)

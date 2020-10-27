@@ -29,6 +29,9 @@ namespace Dawit.Infrastructure.Service.Extensions
 
         public static bool IsEqualsHashed(this string input, string hashedInput)
         {
+            if (hashedInput == null)
+                return false;
+
             var passBuffer = Convert.FromBase64String(hashedInput);
             var salt = new byte[16];
             var hash = new byte[32];

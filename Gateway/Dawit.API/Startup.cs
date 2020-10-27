@@ -48,6 +48,9 @@ namespace Dawit.API
             services.AddTokenAuthentication(Configuration["Jwt:secret"]);
 
             services.AddScoped<INeuralJobRepository, NeuralJobRepository>();
+            services.AddScoped<IAppUserRepository, AppUserRepository>();
+            
+            services.AddTransient<IUserService, UserService>();
             services.AddTransient<NeuralJobService>();
                                                 
             services.AddSingleton<IMsgContext<IModel>, RabbitContext>();            
