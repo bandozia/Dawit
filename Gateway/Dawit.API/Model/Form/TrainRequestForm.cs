@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Dawit.API.Model.Form
 {
-    public class NeuralJobForm
+    public class TrainRequestForm
     {
         [Required]
-        public string Name { get; set; }
+        public string JobId { get; set; }
+        public bool PublicStatus { get; set; }
     }
 }

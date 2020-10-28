@@ -32,7 +32,7 @@ namespace Dawit.API
         }
 
         public IConfiguration Configuration { get; }
-                
+
         public void ConfigureServices(IServiceCollection services)
         {
 
@@ -49,31 +49,37 @@ namespace Dawit.API
 
             services.AddScoped<INeuralJobRepository, NeuralJobRepository>();
             services.AddScoped<IAppUserRepository, AppUserRepository>();
-            
+
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<NeuralJobService>();
-                                                
-            services.AddSingleton<IMsgContext<IModel>, RabbitContext>();            
+
+            services.AddSingleton<IMsgContext<IModel>, RabbitContext>();
             services.AddSingleton<IMsgProducer, RabbitProducer>();
             services.AddSingleton<IMsgConsumer, RabbitConsumer>();
+
+            services.AddSingleton<INeuralJobSubscriber, NeuralJobSubscriberInMemory>();
             services.AddHostedService<NeuralReturnConsumer>();
-            
+
         }
-                
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, BaseContext dbContext)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Dawit.API v1"));                                
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Dawit.API v1"));
+
+                app.UseCors(c => c.WithOrigins("http://localhost:4200")
+                    .AllowAnyMethod().AllowAnyHeader());
             }
 
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             dbContext.Database.EnsureCreated();
-                        
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

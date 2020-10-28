@@ -27,10 +27,17 @@ namespace Dawit.API.Service.Neural
             return job;            
         }
 
-        public async Task TrainNeuralJob(Guid jobId)
+        public async Task<bool> TrainNeuralJob(Guid jobId)
         {
             var job = await _neuralJobRepository.GetByIdAsync(jobId);
-            _eventProducer.AddEventToQueue<NeuralJob>(Queues.NN_START_TRAIN, job);
+            if (job is not null)
+            {
+                _eventProducer.AddEventToQueue<NeuralJob>(Queues.NN_START_TRAIN, job);
+                return true;
+            }
+            else
+                return false;
+            
         }
     }
 }

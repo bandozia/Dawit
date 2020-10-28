@@ -17,7 +17,7 @@ namespace Dawit.Infrastructure.Repositories.ef
 
         public async Task<NeuralJob> GetByIdAsync(Guid id)
         {
-            return await DbSet.Include(n => n.Metrics).SingleAsync(n => n.Id == id);
+            return await DbSet.Include(n => n.Metrics).SingleOrDefaultAsync(n => n.Id == id);
         }
 
         public async Task<NeuralJob> InsertAsync(NeuralJob item)

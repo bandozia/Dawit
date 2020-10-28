@@ -9,7 +9,7 @@ namespace Dawit.Infrastructure.Service.Auth
 {
     public interface IUserService
     {
-        Task<string> AuthenticateUser(string email, string password);
-        Task CreateUser(string email, string password);
+        Task<string> AuthenticateUserAsync(string email, string password);
+        Task CreateUserAsync(string email, string password);
     }
 }

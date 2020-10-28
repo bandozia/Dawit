@@ -2,9 +2,6 @@
 using Dawit.Infrastructure.Repositories;
 using Dawit.Infrastructure.Service.Extensions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Dawit.Infrastructure.Service.Auth
@@ -20,7 +17,7 @@ namespace Dawit.Infrastructure.Service.Auth
             _tokenService = tokenService;
         }
 
-        public async Task<string> AuthenticateUser(string email, string password)
+        public async Task<string> AuthenticateUserAsync(string email, string password)
         {
             var user = await _userRepository.GetByEmailAsync(email);
             return password.IsEqualsHashed(user?.Password) switch
@@ -30,7 +27,7 @@ namespace Dawit.Infrastructure.Service.Auth
             };                                    
         }
 
-        public async Task CreateUser(string email, string password)
+        public async Task CreateUserAsync(string email, string password)
         {
             var user = new AppUser { Email = email, Password = password.ToHashed(), CreationDate = DateTime.UtcNow };
             await _userRepository.InsertAsync(user);

@@ -28,7 +28,7 @@ namespace Dawit.Tests
         [Fact(DisplayName = "CreateUser include user in db with hashed pass")]        
         public async Task CreateUserWorks()
         {
-            await userService.CreateUser("fake@mail.com", "thepassword");
+            await userService.CreateUserAsync("fake@mail.com", "thepassword");
             var user = await userRepo.GetByEmailAsync("fake@mail.com");
             Assert.NotNull(user);
             Assert.Equal(48, user.Password.Length);
@@ -40,7 +40,7 @@ namespace Dawit.Tests
         [InlineData("notexists@mail.com", "embrolio", false)]
         public async Task AuthUsers(string email, string pass, bool authentic)
         {
-            string userToken = await userService.AuthenticateUser(email, pass);
+            string userToken = await userService.AuthenticateUserAsync(email, pass);
             Assert.Equal(authentic, userToken != null);
         }
 
