@@ -17,9 +17,9 @@ using Dawit.Infrastructure.Service.Messaging.Rabbit;
 using RabbitMQ.Client;
 using Dawit.API.Service.Neural;
 using Dawit.Infrastructure.Repositories;
-using Dawit.Domain.Model.Neural;
 using Dawit.Infrastructure.Repositories.ef;
 using Dawit.Infrastructure.Service.Auth;
+using Dawit.Infrastructure.Service.Neural;
 using Dawit.API.Service.Extensions;
 
 namespace Dawit.API
@@ -41,23 +41,23 @@ namespace Dawit.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dawit.API", Version = "v1" });
             });
+                        
 
             services.AddDbContext<BaseContext>(options => options.UseNpgsql(Configuration.GetConnectionString("gdb")));
 
             services.AddScoped(AuthFactory.JWTTokenService);
             services.AddTokenAuthentication(Configuration["Jwt:secret"]);
 
-            services.AddScoped<INeuralJobRepository, NeuralJobRepository>();
+            services.AddScoped<INeuralNetworkRepository, NeuralNetworkRepository>();
             services.AddScoped<IAppUserRepository, AppUserRepository>();
 
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<NeuralJobService>();
+            services.AddTransient<INeuralNetworkService, NeuralNetworkService>();
 
             services.AddSingleton<IMsgContext<IModel>, RabbitContext>();
             services.AddSingleton<IMsgProducer, RabbitProducer>();
             services.AddSingleton<IMsgConsumer, RabbitConsumer>();
-
-            services.AddSingleton<INeuralJobSubscriber, NeuralJobSubscriberInMemory>();
+                        
             services.AddHostedService<NeuralReturnConsumer>();
 
         }

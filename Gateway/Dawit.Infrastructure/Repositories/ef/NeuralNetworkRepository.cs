@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace Dawit.Infrastructure.Repositories.ef
 {
-    public class NeuralJobRepository : BasicRepository<NeuralJob>, INeuralJobRepository
+    public class NeuralNetworkRepository : BasicRepository<NeuralNetwork>, INeuralNetworkRepository
     {
-        public NeuralJobRepository(BaseContext context) : base(context)
+        public NeuralNetworkRepository(BaseContext context) : base(context)
         {
         }
 
-        public async Task<NeuralJob> GetByIdAsync(Guid id)
+        public async Task<NeuralNetwork> GetByIdAsync(Guid id)
         {
-            return await DbSet.Include(n => n.Metrics).SingleOrDefaultAsync(n => n.Id == id);
+            return await DbSet.SingleOrDefaultAsync(n => n.Id == id);
         }
 
-        public async Task<NeuralJob> InsertAsync(NeuralJob item)
+        public async Task<NeuralNetwork> InsertAsync(NeuralNetwork item)
         {
             DbSet.Add(item);
             await Context.SaveChangesAsync();

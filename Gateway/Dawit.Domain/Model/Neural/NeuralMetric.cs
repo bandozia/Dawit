@@ -9,7 +9,7 @@ namespace Dawit.Domain.Model.Neural
 {
     public class NeuralMetric : BaseModel
     {
-        public NeuralJob NeuralJob { get; set; }
+        public NeuralNetwork NeuralNetwork { get; set; }
         public int Epoch { get; set; }
         public int EpochDuration { get; set; }
         public double Accuracy { get; set; }

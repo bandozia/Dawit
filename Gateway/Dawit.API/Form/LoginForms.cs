@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dawit.API.Model.Form
+namespace Dawit.API.From
 {    
     public class LoginForm
     {

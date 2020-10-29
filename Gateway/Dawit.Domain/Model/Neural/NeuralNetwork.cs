@@ -13,7 +13,7 @@ namespace Dawit.Domain.Model.Neural
         TRAINED,
         FAILED
     }
-    public class NeuralJob : BaseModel
+    public class NeuralNetwork : BaseModel
     {
         //TODO: add user        
         public string Name { get; set; }

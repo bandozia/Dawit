@@ -1,7 +1,7 @@
-﻿using Dawit.API.Model.Form;
-using Dawit.API.Service.Neural;
+﻿using Dawit.API.Service.Neural;
 using Dawit.Domain.Model.Neural;
 using Dawit.Infrastructure.Service.Messaging;
+using Dawit.Infrastructure.Service.Neural;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,63 +16,29 @@ namespace Dawit.API.Controllers
     [Route("neural")]
     public class NeuralController : ControllerBase
     {
-        private readonly NeuralJobService _neuralJobService;
-        private readonly INeuralJobSubscriber _nnSubscriber;
-
-        public NeuralController(NeuralJobService neuralJobService, INeuralJobSubscriber nnSubscriber)
+        private readonly INeuralNetworkService _neuralNetService;
+        
+        public NeuralController(INeuralNetworkService neuralnetService)
         {
-            _neuralJobService = neuralJobService;
-            _nnSubscriber = nnSubscriber;
+            _neuralNetService = neuralnetService;
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create(NeuralJobForm form)
+        public async Task<IActionResult> Create(NeuralNetwork network)
         {
-            var job = await _neuralJobService.CreateNeuralJob(form);
-            return Created(job.Id.ToString(), job);
+            var result = await _neuralNetService.CreateNeuralNetwork(network);
+            return Created(network.Id.ToString(), network);
         }
 
         [HttpPost("train")]
-        public async Task<IActionResult> StartTrain(TrainRequestForm trainRequest)
+        public async Task<IActionResult> StartTrain(string networkId)
         {
             //TODO: check if user realy owns the job
-            if (await _neuralJobService.TrainNeuralJob(Guid.Parse(trainRequest.JobId)))
+            if (await _neuralNetService.StartTrainNetwork(networkId))
                 return Ok();
             else 
                 return NotFound();
-        }
-
-        [HttpGet("subscribe/{jobId}")]
-        public async Task Subscribe(CancellationToken ct, string jobId)
-        {
-            //TODO: check job exists
-            //TODO: check client owns job or job is public
-            Response.Headers.Add("Content-Type", "text/event-stream");
-            bool jobComplete = false;
-
-            Action<NeuralMetric> onProgress = async m =>
-            {
-                await Response.WriteAsync($"dados vindo{m.JobId}\n\n", ct);
-                await Response.Body.FlushAsync();
-            };
-
-            Action<JobResult> onComplete = async r =>
-            {
-                await Response.WriteAsync($"acabou{r.JobId} \n\n", ct);
-                await Response.Body.FlushAsync();
-                jobComplete = true;
-            };
-
-            _nnSubscriber.Subscribe(Guid.Parse(jobId), onComplete, onProgress);
-
-            while (!ct.IsCancellationRequested && !jobComplete)
-            {
-                await Task.Delay(1000);
-            }
-
-            _nnSubscriber.Unsubscribe(Guid.Parse(jobId), onProgress);
-            _nnSubscriber.Unsubscribe(Guid.Parse(jobId), onComplete);
-        }
+        }               
 
     }
 }

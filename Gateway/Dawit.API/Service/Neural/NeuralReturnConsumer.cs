@@ -15,13 +15,11 @@ namespace Dawit.API.Service.Neural
     {
         private readonly IMsgConsumer _msgConsumer;
         private readonly IServiceProvider _services;
-        private readonly INeuralJobSubscriber _nnSubscriber;
-
-        public NeuralReturnConsumer(IMsgConsumer msgConsumer, IServiceProvider services, INeuralJobSubscriber nnSubscriber)
+        
+        public NeuralReturnConsumer(IMsgConsumer msgConsumer, IServiceProvider services)
         {
             _msgConsumer = msgConsumer;
-            _services = services;
-            _nnSubscriber = nnSubscriber;
+            _services = services;            
 
             RegisterDefaultConsumers();
         }
@@ -35,17 +33,17 @@ namespace Dawit.API.Service.Neural
         private async Task OnTrainProgress(NeuralMetric progress)
         {            
             //TODO: add metric on db
-            _nnSubscriber.NotifyTrainProgress(progress.JobId, progress);         
+            //TODO: notify subscribed clients
         }
 
         private async Task OnTrainComplete(JobResult result)
         {
             using (var scope = _services.CreateScope())
             {
-                var neuralRepo = scope.ServiceProvider.GetRequiredService<INeuralJobRepository>();
+                var neuralRepo = scope.ServiceProvider.GetRequiredService<INeuralNetworkRepository>();
                 //TODO: update neural job
             }
-            _nnSubscriber.NotifyTrainComplete(result.JobId, result);                        
+            //TODO: notify subscribed clients
         }
 
         public Task StartAsync(CancellationToken cancellationToken) => Task.CompletedTask;

@@ -28,11 +28,11 @@ namespace Dawit.Infrastructure.Context
                 user.HasIndex(u => u.Email).IsUnique();
             });
 
-            modelBuilder.Entity<NeuralJob>(njob =>
+            modelBuilder.Entity<NeuralNetwork>(njob =>
             {
                 njob.HasKey(n => n.Id);
                 njob.HasIndex(n => n.Id).IsUnique();
-                njob.HasMany(n => n.Metrics).WithOne(m => m.NeuralJob);
+                njob.HasMany(n => n.Metrics).WithOne(m => m.NeuralNetwork);
             });
         }
     }
