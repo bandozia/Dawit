@@ -21,6 +21,8 @@ using Dawit.Infrastructure.Repositories.ef;
 using Dawit.Infrastructure.Service.Auth;
 using Dawit.Infrastructure.Service.Neural;
 using Dawit.API.Service.Extensions;
+using Dawit.Infrastructure.Service.Signal;
+using Dawit.API.Service.Signal;
 
 namespace Dawit.API
 {
@@ -41,7 +43,8 @@ namespace Dawit.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dawit.API", Version = "v1" });
             });
-                        
+
+            services.AddDistributedMemoryCache(); //TODO: change for redis cache
 
             services.AddDbContext<BaseContext>(options => options.UseNpgsql(Configuration.GetConnectionString("gdb")));
 
@@ -57,8 +60,12 @@ namespace Dawit.API
             services.AddSingleton<IMsgContext<IModel>, RabbitContext>();
             services.AddSingleton<IMsgProducer, RabbitProducer>();
             services.AddSingleton<IMsgConsumer, RabbitConsumer>();
+            services.AddSingleton<IConnectionMapping<Guid>, MemoryCacheMapping>();
                         
             services.AddHostedService<NeuralReturnConsumer>();
+
+            //TODO: add redis backplate
+            services.AddSignalR();
 
         }
 
@@ -83,7 +90,9 @@ namespace Dawit.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                
             });
+            
         }
     }
 }

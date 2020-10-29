@@ -20,7 +20,7 @@ namespace Dawit.API.Service.Neural
         {
             _msgConsumer = msgConsumer;
             _services = services;            
-
+            
             RegisterDefaultConsumers();
         }
 

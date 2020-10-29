@@ -2,6 +2,7 @@
 using Dawit.Domain.Model.Neural;
 using Dawit.Infrastructure.Service.Messaging;
 using Dawit.Infrastructure.Service.Neural;
+using Dawit.Infrastructure.Service.Signal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -20,7 +21,7 @@ namespace Dawit.API.Controllers
         
         public NeuralController(INeuralNetworkService neuralnetService)
         {
-            _neuralNetService = neuralnetService;
+            _neuralNetService = neuralnetService;            
         }
 
         [HttpPost("create")]
@@ -28,6 +29,9 @@ namespace Dawit.API.Controllers
         {
             var result = await _neuralNetService.CreateNeuralNetwork(network);
             return Created(network.Id.ToString(), network);
+
+            
+            
         }
 
         [HttpPost("train")]
@@ -38,7 +42,8 @@ namespace Dawit.API.Controllers
                 return Ok();
             else 
                 return NotFound();
-        }               
+        }
+                
 
     }
 }
