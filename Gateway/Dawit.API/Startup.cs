@@ -23,6 +23,7 @@ using Dawit.Infrastructure.Service.Neural;
 using Dawit.API.Service.Extensions;
 using Dawit.Infrastructure.Service.Signal;
 using Dawit.API.Service.Signal;
+using Dawit.API.Hubs;
 
 namespace Dawit.API
 {
@@ -61,7 +62,7 @@ namespace Dawit.API
             services.AddSingleton<IMsgProducer, RabbitProducer>();
             services.AddSingleton<IMsgConsumer, RabbitConsumer>();
             services.AddSingleton<IConnectionMapping<Guid>, MemoryCacheMapping>();
-                        
+
             services.AddHostedService<NeuralReturnConsumer>();
 
             //TODO: add redis backplate
@@ -90,9 +91,13 @@ namespace Dawit.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                
+                endpoints.MapHub<NotificationHub>("/notifications", opts =>
+                {
+                    opts.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets;
+                });
+
             });
-            
+
         }
     }
 }

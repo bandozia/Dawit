@@ -1,6 +1,8 @@
-﻿using Dawit.Domain.Model.Neural;
+﻿using Dawit.API.Hubs;
+using Dawit.Domain.Model.Neural;
 using Dawit.Infrastructure.Repositories;
 using Dawit.Infrastructure.Service.Messaging;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -15,13 +17,15 @@ namespace Dawit.API.Service.Neural
     {
         private readonly IMsgConsumer _msgConsumer;
         private readonly IServiceProvider _services;
-        
-        public NeuralReturnConsumer(IMsgConsumer msgConsumer, IServiceProvider services)
+        private readonly IHubContext<NotificationHub> _notificationHub;
+
+        public NeuralReturnConsumer(IMsgConsumer msgConsumer, IServiceProvider services, IHubContext<NotificationHub> notificationHub)
         {
             _msgConsumer = msgConsumer;
-            _services = services;            
-            
+            _services = services;
+
             RegisterDefaultConsumers();
+            _notificationHub = notificationHub;
         }
 
         private void RegisterDefaultConsumers()
@@ -31,9 +35,10 @@ namespace Dawit.API.Service.Neural
         }
 
         private async Task OnTrainProgress(NeuralMetric progress)
-        {            
+        {
             //TODO: add metric on db
             //TODO: notify subscribed clients
+            await _notificationHub.Clients.All.SendAsync("onTrainProgress", progress);//test
         }
 
         private async Task OnTrainComplete(JobResult result)
@@ -44,6 +49,7 @@ namespace Dawit.API.Service.Neural
                 //TODO: update neural job
             }
             //TODO: notify subscribed clients
+            await _notificationHub.Clients.All.SendAsync("onTrainComplete", result.JobId);//test
         }
 
         public Task StartAsync(CancellationToken cancellationToken) => Task.CompletedTask;

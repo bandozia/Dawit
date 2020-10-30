@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Dawit.API\Dawit.API.csproj" />
     <ProjectReference Include="..\Dawit.Domain\Dawit.Domain.csproj" />
     <ProjectReference Include="..\Dawit.Infrastructure\Dawit.Infrastructure.csproj" />
   </ItemGroup>

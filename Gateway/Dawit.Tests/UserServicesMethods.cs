@@ -34,14 +34,18 @@ namespace Dawit.Tests
             Assert.Equal(48, user.Password.Length);
         }
 
-        [Theory(DisplayName = "Authenticate created user and return token")]
-        [InlineData("fake@mail.com", "thepassword", true)]
-        [InlineData("fake@mail.com", "embrolio", false)]
-        [InlineData("notexists@mail.com", "embrolio", false)]
-        public async Task AuthUsers(string email, string pass, bool authentic)
+        [Fact(DisplayName = "Authenticate created user and return token")]        
+        public async Task AuthUsers()
         {
-            string userToken = await userService.AuthenticateUserAsync(email, pass);
-            Assert.Equal(authentic, userToken != null);
+            await userService.CreateUserAsync("fake2@mail.com", "thepassword");
+
+            string validToken = await userService.AuthenticateUserAsync("fake2@mail.com", "thepassword");
+            string wrongPass = await userService.AuthenticateUserAsync("fake2@mail.com", "wrongpass");
+            string unexistent = await userService.AuthenticateUserAsync("fake666@mail.com", "thepassword");
+
+            Assert.NotNull(validToken);
+            Assert.Null(wrongPass);
+            Assert.Null(unexistent);
         }
 
         

@@ -29,9 +29,6 @@ namespace Dawit.API.Controllers
         {
             var result = await _neuralNetService.CreateNeuralNetwork(network);
             return Created(network.Id.ToString(), network);
-
-            
-            
         }
 
         [HttpPost("train")]
