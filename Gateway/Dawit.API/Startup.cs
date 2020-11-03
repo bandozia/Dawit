@@ -78,8 +78,10 @@ namespace Dawit.API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Dawit.API v1"));
 
-                app.UseCors(c => c.WithOrigins("http://localhost:4200")
-                    .AllowAnyMethod().AllowAnyHeader());
+                /*app.UseCors(c => c.WithOrigins("http://localhost:4200")
+                    .AllowAnyMethod().AllowAnyHeader());*/
+            	app.UseCors(cors => cors.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed((host) => true).AllowCredentials());
+            	Console.WriteLine("-----------EM DEV---------");
             }
 
             app.UseRouting();

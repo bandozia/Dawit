@@ -1,0 +1,38 @@
+<clr-alert [clrAlertType]="'danger'" *ngIf="registerError">
+    <clr-alert-item>
+        <span class="alert-text">
+            Nao foi possivel criar um novo usuario. <strong>{{registerError}}</strong>
+        </span>
+    </clr-alert-item>
+</clr-alert>
+
+<div *ngIf="!userCreated; else userCreatedView">
+    <h2>criar novo usuario</h2>
+    <div>
+        <form clrForm [formGroup]="form" clrLayout="vertical" (submit)="register()">
+            <clr-input-container>
+                <label>e-mail</label>
+                <input type="email" clrInput formControlName="email" />
+                <clr-control-error> insira um e-mail valido</clr-control-error>
+            </clr-input-container>
+            <clr-password-container>
+                <label>senha</label>
+                <input type="password" clrPassword formControlName="password" />
+                <clr-control-error>a senha deve ter ao menos 6 digitos</clr-control-error>
+            </clr-password-container>
+            <clr-password-container>
+                <label>senha</label>
+                <input type="password" clrPassword formControlName="repeatPassword" />
+                <clr-control-error>ambas as senhas devem ser iguais</clr-control-error>
+            </clr-password-container>
+            <br />
+            <button class="btn btn-primary" type="submit">registrar</button>
+            <a [routerLink]="['/login']" class="signup"> ou entre se voce ja tem um usuario </a>
+        </form>
+    </div>
+</div>
+
+<ng-template #userCreatedView>
+    <h3>Novo usuario criado com sucesso</h3>
+    <p>verifique seu e-mail para confirmar o registro</p>
+</ng-template>

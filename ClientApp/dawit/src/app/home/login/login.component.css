@@ -1,0 +1,14 @@
+input {
+    width: 15rem;
+}
+
+.login-error {
+    background-color: brown;
+    color: white;
+    padding: 0.3rem;
+    border-radius: 0.2rem;   
+}
+
+.login-container {
+    max-width: 20rem;     
+}

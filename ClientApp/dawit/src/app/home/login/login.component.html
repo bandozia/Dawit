@@ -1,0 +1,28 @@
+<div class="login-container">
+    <form [formGroup]="form" (submit)="login()">
+        <section class="title">
+            <h2 class="welcome">login</h2>
+            dawit
+            <h5 class="hint">entre com seu e-mail e senha</h5>
+        </section>
+        <div class="login-group">
+            <clr-input-container>
+                <label class="clr-sr-only">e-mail</label>
+                <input type="text" clrInput placeholder="e-mail" formControlName="email" />
+            </clr-input-container>
+            <clr-password-container>
+                <label class="clr-sr-only">senha</label>
+                <input type="password" clrPassword placeholder="senha" formControlName="password" />
+            </clr-password-container>
+            <br />
+            <div class="login-error" *ngIf="loginFail">
+                <clr-icon shape="error-standard"></clr-icon>
+                <span>e-mail ou senha invalidos</span>
+            </div>
+            <button type="submit" class="btn btn-primary" [disabled]="form.invalid">continuar</button>
+            <a [routerLink]="['/register']" class="signup"> ou registre-se</a>
+        </div>
+    </form>
+    <br />
+    <a href="javascript://" class="signup">esqueceu a senha?</a>
+</div>

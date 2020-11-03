@@ -1,0 +1,31 @@
+<header class="header-2">
+    <div class="branding">
+        
+            <clr-icon shape="ruler-pencil" class="nav-link"></clr-icon>
+            <span class="title">dawit</span>
+        
+    </div>
+    
+    <div class="header-nav">
+        <a class="nav-link">
+            redes neurais
+        </a>
+        <a class="active nav-link">
+            treinamentos
+        </a>
+    </div>
+
+    <div class="header-actions" *ngIf="user$ | async as user">
+        <clr-dropdown>
+            <button class="nav-text" clrDropdownTrigger aria-label="open user profile">
+                <clr-icon shape="user"></clr-icon>
+                user@email.com
+                <clr-icon shape="caret down"></clr-icon>
+            </button>
+            <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">                
+                <a (click)="logout()" clrDropdownItem>Log out</a>
+            </clr-dropdown-menu>
+        </clr-dropdown>
+    </div>
+    
+</header>

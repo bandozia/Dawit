@@ -1,0 +1,23 @@
+<div class="alerts-container" *ngIf="alerts.length > 0">
+
+    <div class="clr-row">
+        <div class="clr-col-11">
+            <div *ngFor="let alert of alerts">
+                <div class="single-alert">
+                    <clr-icon shape="info-standard" style="margin-right: 10px;"></clr-icon>
+                    <div class="alert-text">
+                        {{alert.text}}
+                    </div>
+                    <a (click)="alertClosed(alert)">
+                        <clr-icon shape="times"></clr-icon>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="close-all clr-col-1">
+            <clr-icon shape="times" size="22"></clr-icon>
+        </div>
+    </div>
+
+
+</div>
